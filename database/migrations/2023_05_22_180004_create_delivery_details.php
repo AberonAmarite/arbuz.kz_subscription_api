@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('delivery_details', function (Blueprint $table) {
             $table->id();
             $table->enum('day_name', ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']);
-            $table->time('time_start');
-            $table->time('time_end');
+            $table->time('time_start')->default('00:00:00');
+            $table->time('time_end')->default('23:59:59');;
             $table->string('address');
             $table->timestamps();
         });

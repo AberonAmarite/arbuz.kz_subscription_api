@@ -4,49 +4,47 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscriptionItemStoreRequest;
-use App\Http\Requests\SubscriptionStoreRequest;
-use App\Http\Resources\SubscriptionResouce;
+use App\Http\Resources\SubscriptionItemResouce;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class SubscriptionController extends Controller
+class SubscriptionItemController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return SubscriptionResouce::collection(Subscription::all());
+        return SubscriptionItemResouce::collection(Subscription::all());
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SubscriptionStoreRequest $request)
+    public function store(SubscriptionItemStoreRequest $request)
     {
-        //dump($request->all());
         $created_subscription = Subscription::create($request->validated());
 
-        return new SubscriptionResouce($created_subscription);
+        return new SubscriptionItemResouce($created_subscription);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Subscription $subscription)
+    public function show(SubscriptionItem $subscriptionItem)
     {
-        return new SubscriptionResouce($subscription);
+        return new SubscriptionItemResouce($subscriptionItem);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(SubscriptionStoreRequest $request, Subscription $subscription)
+    public function update(SubscriptionItemStoreRequest $request, Subscription $subscription)
     {
         $subscription->update($request->validated());
 
-        return new SubscriptionResouce($subscription);
+        return new SubscriptionItemResouce($subscription);
     }
 
     /**

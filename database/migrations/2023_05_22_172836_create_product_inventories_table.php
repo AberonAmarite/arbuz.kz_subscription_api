@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('product_inventories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('quantity');
+            $table->decimal('quantity', 8, 2);
+            $table->string('name');
             $table->timestamps();
         });
     }

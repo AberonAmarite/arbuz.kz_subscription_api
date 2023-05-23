@@ -17,7 +17,8 @@ class ProductInventoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->word,
+            'quantity' => fake()->randomFloat(null, 0 , 30),
         ];
     }
 }

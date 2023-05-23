@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\DeliveryDetailsController;
+use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\SubscriptionItemController;
+use App\Models\DeliveryDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::apiResources([
+    'subscriptions' => SubscriptionController::class,
+    'delivery_details' => DeliveryDetailsController::class,
+    'subscription_items' => SubscriptionItemController::class
+]);

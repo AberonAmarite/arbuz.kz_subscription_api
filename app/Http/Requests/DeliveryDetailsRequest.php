@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SubscriptionStoreRequest extends FormRequest
+class DeliveryDetailsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,10 @@ class SubscriptionStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date'=>'required',
-            'end_date'=>'required',
-            'phone_number'=>'required',
-           // 'delivery_details_id
+            'day_name'=>'required',
+            'address'=>'required',
+            'time_start'=>'required',
+            'time_end'=>'required',
         ];
     }
-
-
 }
