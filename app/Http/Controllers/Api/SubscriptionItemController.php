@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscriptionItemStoreRequest;
-use App\Http\Resources\SubscriptionItemResouce;
+use App\Http\Resources\SubscriptionItemResource;
 use App\Models\Subscription;
+use App\Models\SubscriptionItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -16,7 +17,7 @@ class SubscriptionItemController extends Controller
      */
     public function index()
     {
-        return SubscriptionItemResouce::collection(Subscription::all());
+        return SubscriptionItemResource::collection(Subscription::all());
     }
 
     /**
@@ -26,7 +27,7 @@ class SubscriptionItemController extends Controller
     {
         $created_subscription = Subscription::create($request->validated());
 
-        return new SubscriptionItemResouce($created_subscription);
+        return new SubscriptionItemResource($created_subscription);
     }
 
     /**
@@ -34,25 +35,25 @@ class SubscriptionItemController extends Controller
      */
     public function show(SubscriptionItem $subscriptionItem)
     {
-        return new SubscriptionItemResouce($subscriptionItem);
+        return new SubscriptionItemResource($subscriptionItem);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(SubscriptionItemStoreRequest $request, Subscription $subscription)
+    public function update(SubscriptionItemStoreRequest $request, SubscriptionItem $subscriptionItem)
     {
-        $subscription->update($request->validated());
+        $subscriptionItem->update($request->validated());
 
-        return new SubscriptionItemResouce($subscription);
+        return new SubscriptionItemResource($subscription);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subscription $subscription)
+    public function destroy(SubscriptionItem $subscriptionItem)
     {
-        $subscription->delete();
+        $subscriptionItem->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
     }

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->timestamp('start_date');
             $table->timestamp('end_date');
             $table->string('phone_number', 15);
-            $table->foreignId('delivery_details_id');
             $table->foreignId('user_id');
             $table->timestamps();
         });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\SufficientInventory;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SubscriptionStoreRequest extends FormRequest
@@ -25,7 +26,18 @@ class SubscriptionStoreRequest extends FormRequest
             'start_date'=>'required',
             'end_date'=>'required',
             'phone_number'=>'required',
-           // 'delivery_details_id
+            'user_id' => 'required',
+
+            'order_items' => 'required|array',
+            'order_items.*' => ['required', 'array', new SufficientInventory],
+            'order_items.*.product_id' => 'required|exists:products,id',
+            'order_items.*.quantity' => ['required', 'integer', 'min:1'],
+
+            'delivery_details' => 'required',
+            'delivery_details.day_name' => 'required|string',
+            'delivery_details.time_start' => 'required',
+            'delivery_details.time_end' => 'required',
+            'delivery_details.address' => 'required|string',
         ];
     }
 

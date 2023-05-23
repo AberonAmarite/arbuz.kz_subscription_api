@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SubscriptionItemStoreRequest;
 use App\Http\Requests\SubscriptionStoreRequest;
-use App\Http\Resources\SubscriptionResouce;
+use App\Http\Resources\SubscriptionResource;
+use App\Models\DeliveryDetails;
 use App\Models\Subscription;
-use Illuminate\Http\Request;
+use App\Models\SubscriptionItem;
 use Illuminate\Http\Response;
 
 class SubscriptionController extends Controller
@@ -17,7 +17,7 @@ class SubscriptionController extends Controller
      */
     public function index()
     {
-        return SubscriptionResouce::collection(Subscription::all());
+        return SubscriptionResource::collection(Subscription::all());
     }
 
     /**
@@ -25,10 +25,25 @@ class SubscriptionController extends Controller
      */
     public function store(SubscriptionStoreRequest $request)
     {
-        //dump($request->all());
-        $created_subscription = Subscription::create($request->validated());
+        $validatedData = $request->validated();
 
-        return new SubscriptionResouce($created_subscription);
+        // Create delivery details
+        $deliveryDetails = DeliveryDetails::create($validatedData['delivery_details']);
+        $deliveryDetails->save();
+        // Create subscription
+        $createdSubscription = Subscription::create($validatedData);
+
+        // Create subscription items
+        foreach ($validatedData['order_items'] as $orderItemData) {
+            $orderItem = new SubscriptionItem([
+                'product_id' => $orderItemData['product_id'],
+                'quantity' => $orderItemData['quantity'],
+                'subscription_id' => $createdSubscription->id
+            ]);
+            $orderItem->save();
+        }
+
+        return new SubscriptionResource($createdSubscription);
     }
 
     /**
@@ -36,7 +51,7 @@ class SubscriptionController extends Controller
      */
     public function show(Subscription $subscription)
     {
-        return new SubscriptionResouce($subscription);
+        return new SubscriptionResource($subscription);
     }
 
     /**
@@ -44,9 +59,31 @@ class SubscriptionController extends Controller
      */
     public function update(SubscriptionStoreRequest $request, Subscription $subscription)
     {
-        $subscription->update($request->validated());
+        $validatedData = $request->validated();
 
-        return new SubscriptionResouce($subscription);
+        // Update delivery details
+        $subscription->deliveryDetails()->update($validatedData['delivery_details']);
+
+        // Update subscription
+        $subscription->update($validatedData);
+
+        // Update subscription items
+        if (isset($validatedData['order_items']) && is_array($validatedData['order_items'])) {
+            $subscription->subscriptionItems()->delete();
+
+            foreach ($validatedData['order_items'] as $orderItemData) {
+                $orderItem = $subscription->subscriptionItems()->find($orderItemData['id']);
+
+                if ($orderItem) {
+                    $orderItem->update([
+                        'product_id' => $orderItemData['product_id'],
+                        'quantity' => $orderItemData['quantity'],
+                    ]);
+                }
+            }
+        }
+
+        return new SubscriptionResource($subscription);
     }
 
     /**
