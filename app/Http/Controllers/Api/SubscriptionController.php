@@ -26,12 +26,18 @@ class SubscriptionController extends Controller
     public function store(SubscriptionStoreRequest $request)
     {
         $validatedData = $request->validated();
+        $createdSubscription = Subscription::create($validatedData);
 
         // Create delivery details
-        $deliveryDetails = DeliveryDetails::create($validatedData['delivery_details']);
+        $deliveryDetails = new DeliveryDetails([
+            'day_name'=>$validatedData['delivery_details']['day_name'],
+            'time_start'=>$validatedData['delivery_details']['time_start'],
+            'time_end'=>$validatedData['delivery_details']['time_end'],
+            'address'=>$validatedData['delivery_details']['address'],
+            'subscription_id'=>$createdSubscription->id,
+        ]);
         $deliveryDetails->save();
         // Create subscription
-        $createdSubscription = Subscription::create($validatedData);
 
         // Create subscription items
         foreach ($validatedData['order_items'] as $orderItemData) {
@@ -61,31 +67,28 @@ class SubscriptionController extends Controller
     {
         $validatedData = $request->validated();
 
-        // Update delivery details
-        $subscription->deliveryDetails()->update($validatedData['delivery_details']);
+        $deliveryDetailsData = $validatedData['delivery_details'];
+
+        $subscription->deliveryDetails()->update($deliveryDetailsData);
 
         // Update subscription
         $subscription->update($validatedData);
 
-        // Update subscription items
         if (isset($validatedData['order_items']) && is_array($validatedData['order_items'])) {
             $subscription->subscriptionItems()->delete();
 
             foreach ($validatedData['order_items'] as $orderItemData) {
-                $orderItem = $subscription->subscriptionItems()->find($orderItemData['id']);
-
-                if ($orderItem) {
-                    $orderItem->update([
-                        'product_id' => $orderItemData['product_id'],
-                        'quantity' => $orderItemData['quantity'],
-                    ]);
-                }
+                $orderItem = new SubscriptionItem([
+                    'product_id' => $orderItemData['product_id'],
+                    'quantity' => $orderItemData['quantity'],
+                    'subscription_id' => $subscription->id
+                ]);
+                $subscription->subscriptionItems()->save($orderItem);
             }
         }
 
         return new SubscriptionResource($subscription);
     }
-
     /**
      * Remove the specified resource from storage.
      */

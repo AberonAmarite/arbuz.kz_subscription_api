@@ -22,7 +22,7 @@ class SufficientInventory implements ValidationRule
             if(!$product){
                 $fail('No such product in inventory.');
             }
-            if($product->$quantity < $quantity){
+            if($product->quantity < $quantity){
                 $fail('The selected product does not have sufficient inventory.');
             }
 

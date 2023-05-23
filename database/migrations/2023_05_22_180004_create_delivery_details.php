@@ -17,6 +17,7 @@ return new class extends Migration
             $table->time('time_start')->default('00:00:00');
             $table->time('time_end')->default('23:59:59');;
             $table->string('address');
+            $table->foreignId('subscription_id');
             $table->timestamps();
         });
     }

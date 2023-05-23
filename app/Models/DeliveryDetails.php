@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeliveryDetails extends Model
 {
-    protected $fillable = ['day_name', 'address', 'time_start', 'time_end'];
+    protected $fillable = ['day_name', 'address', 'time_start', 'time_end', 'subscription_id'];
 
 
     use HasFactory;
